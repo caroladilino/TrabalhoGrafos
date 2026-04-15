@@ -1,5 +1,0 @@
-anotações sobre como fiz o projeto, usar para construir o relatório depois
-
-1. comecei construindo a estrutura grafo, me inspirei nas estruturas q o alexandre fez para ed
-2. mandei pra ia checar: ela indicou pra ao invés de usar lista usar std::unordered_map pra deixar O(1) mas não tenho familiaridade com essa estrutura de dados, vou esperar pra fazer essa parte mais tarde depois de persquisar sobre isso melhor
-3.criar as estruturas das funções

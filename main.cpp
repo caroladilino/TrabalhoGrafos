@@ -1,6 +1,7 @@
 // Copyright [2026] Carolina Adilino
 #include <list>
 #include <algorithm>
+#include <map>
 
 
 //namespace = uma região do código 
@@ -39,9 +40,8 @@ namespace structures {
             //ler(arquivo)2
         
         private:
-            std::list<T> vertices;
-            std::list<T> arestas; //decidir como armazenar arestas 
-            int funcao(std::list<T> arestas)
+            // Mapa onde a chave é o vértice e o valor é uma lista de pares (vizinho, peso)
+            std::map<T, std::list<std::pair<T, int> > > adjacencias;
 
     };
 
@@ -50,37 +50,57 @@ namespace structures {
     //Função retorna quantidade de vértices 
     template<typename T>
     int structures::Grafo<T>::qtdVertices(){
-        return vertices.size();
+        return adjacencias.size();
     }
 
     template<typename T>
     int structures::Grafo<T>::qtdArestas(){
-        return arestas.size();
+        int contador = 0;
+        for (auto [vertice,vizinhos] : adjacencias){
+            contador += vizinhos.size();
+        }
+        return contador/2; //grafo não direcionado
     }
-
+    
     template<typename T>
     int structures::Grafo<T>::grau(const T& vertice){
-        //botar codigo aqui
+        //quantidade de vizinhos = tamanho da resposta de quando chamamos o hash para um vertice
+        return adjacencias.at(vertice).size();
     }
 
     template<typename T>
     int structures::Grafo<T>::rotulo(const T& vertice){
-        //botar codigo aqui
+        //não entendi
+        return 0;
     }
 
     template<typename T>
     std::list<T> structures::Grafo<T>::vizinhos(const T& vertice){
-        //botar codigo aqui
+        std::list<T> lista_vizinhos;
+        for (auto par : adjacencias.at(vertice)){
+            lista_vizinhos.push_back(par.first);
+        }
+        return lista_vizinhos;
     }
 
     template<typename T>
     bool structures::Grafo<T>::haAresta(const T& vertice1, const T& vertice2){
-        //botar codigo aqui
+        for (auto par : adjacencias.at(vertice1)){
+            if (par.first == vertice2){
+                return true;
+            }
+        }
+        return false;
     }
 
     template<typename T>
     int structures::Grafo<T>::peso(const T& vertice1, const T& vertice2){
-        //botar codigo aqui
+        for (auto par : adjacencias.at(vertice1)){
+            if (par.first == vertice2){
+                return par.second;
+            }
+        }
+        return 100000; //no caso aqui é pra retornar infinito, precisa descobrir como faz isso
     }
 }
 
