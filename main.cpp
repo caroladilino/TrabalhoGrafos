@@ -48,7 +48,7 @@ namespace structures {
 
     };
 
-    //botar construtores e destrutores?
+    //botar construtores e destrutores? 
 
     //Função retorna quantidade de vértices 
     template<typename T>
@@ -73,7 +73,7 @@ namespace structures {
 
     template<typename T>
     int structures::Grafo<T>::rotulo(const T& vertice){
-        //não entendi
+        //BOTAR CÓDIGO AQUI
         return 0;
     }
 
@@ -103,13 +103,14 @@ namespace structures {
                 return par.second;
             }
         }
-        return 100000; //no caso aqui é pra retornar infinito, precisa descobrir como faz isso
+        return 100000; //MUDAR PARA INFINITO
     }
     template<typename T>
     void structures::Grafo<T>::ler(std::ifstream &arquivo) {
         std::string linha;
         while (std::getline(arquivo, linha)) {
-            //EDITAR LOGICA PARA CRIAR O GRAFO
+            //ESCREVER O CÓDIGO AQUI
+
             std::cout << linha << std::endl;
         }
     }
@@ -117,8 +118,7 @@ namespace structures {
     //---BUSCA EM LARGURA---
     template<typename T>
     void structures::Grafo<T>::buscaLargura(std::ifstream &arquivo, const T& vertice){
-        //escrever aqui o código
+        //ESCREVER O CÓDIGO AQUI
     }
 
-    
 }
