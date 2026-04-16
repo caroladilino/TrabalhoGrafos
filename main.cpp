@@ -39,6 +39,8 @@ namespace structures {
 
             // deve carregar um grafo a partir de um arquivo no formato especificado ao final deste documento.
             void ler(std::ifstream &arquivo);
+
+            void buscaLargura(std::ifstream &arquivo, const T& vertice);
         
         private:
             // Mapa onde a chave é o vértice e o valor é uma lista de pares (vizinho, peso)
@@ -110,6 +112,12 @@ namespace structures {
             //EDITAR LOGICA PARA CRIAR O GRAFO
             std::cout << linha << std::endl;
         }
+    }
+
+    //---BUSCA EM LARGURA---
+    template<typename T>
+    void structures::Grafo<T>::buscaLargura(std::ifstream &arquivo, const T& vertice){
+        //escrever aqui o código
     }
 
     
