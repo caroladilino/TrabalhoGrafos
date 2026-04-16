@@ -2,7 +2,8 @@
 #include <list>
 #include <algorithm>
 #include <map>
-
+#include <iostream>
+#include <fstream>
 
 //namespace = uma região do código 
 namespace structures {
@@ -37,7 +38,7 @@ namespace structures {
             int peso(const T& vertice1, const T& vertice2);
 
             // deve carregar um grafo a partir de um arquivo no formato especificado ao final deste documento.
-            //ler(arquivo)2
+            void ler(std::ifstream &arquivo);
         
         private:
             // Mapa onde a chave é o vértice e o valor é uma lista de pares (vizinho, peso)
@@ -102,6 +103,14 @@ namespace structures {
         }
         return 100000; //no caso aqui é pra retornar infinito, precisa descobrir como faz isso
     }
+    template<typename T>
+    void structures::Grafo<T>::ler(std::ifstream &arquivo) {
+        std::string linha;
+        while (std::getline(arquivo, linha)) {
+            //EDITAR LOGICA PARA CRIAR O GRAFO
+            std::cout << linha << std::endl;
+        }
+    }
+
+    
 }
-
-
