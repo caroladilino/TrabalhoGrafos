@@ -4,6 +4,7 @@
 #include <map>
 #include <iostream>
 #include <fstream>
+#include <string>
 
 //namespace = uma região do código 
 namespace structures {
@@ -48,7 +49,6 @@ namespace structures {
 
     };
 
-    //botar construtores e destrutores? 
 
     //Função retorna quantidade de vértices 
     template<typename T>
@@ -108,11 +108,26 @@ namespace structures {
     template<typename T>
     void structures::Grafo<T>::ler(std::ifstream &arquivo) {
         std::string linha;
-        while (std::getline(arquivo, linha)) {
-            //ESCREVER O CÓDIGO AQUI
+        std::string inicioVertices = "*vertices";
+        std::string inicioPesos = "*edges";
 
-            std::cout << linha << std::endl;
-        }
+        if (std::getline(arquivo, linha)) {
+            size_t pos = linha.find(inicioVertices);
+            if (pos != std::string::npos) {
+                std::string valor = linha.substr(pos + inicioVertices.length());
+                int num = std::stoi(valor);
+                for (int i = 0; i < num; i++){
+                    std::getline(arquivo, linha);
+                    //CRIAR UM ITEM NO MAP PARA CADA VERTICE
+                    //pra debuggar: std::cout << linha << std::endl;
+                }
+                std::getline(arquivo, linha);
+                while (std::getline(arquivo, linha)){
+                    //pra debuggar: std::cout << linha << std::endl;
+                    //MAPEAR CADA ARESTA
+                }
+            }     
+        } 
     }
 
     //---BUSCA EM LARGURA---
@@ -121,4 +136,14 @@ namespace structures {
         //ESCREVER O CÓDIGO AQUI
     }
 
+}
+
+int main(int argc, char* argv[]){
+    //todo: alterar pra receceber o nome do arquivo pelo terminal
+    structures::Grafo<std::string> meuGrafo1;
+    std::ifstream arquivoEntrada("grafo.txt");
+
+    meuGrafo1.ler(arquivoEntrada);
+
+    return 0;
 }
