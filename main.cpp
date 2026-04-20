@@ -5,6 +5,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <sstream>
 
 //namespace = uma região do código 
 namespace structures {
@@ -43,7 +44,7 @@ namespace structures {
 
             void buscaLargura(std::ifstream &arquivo, const T& vertice);
         
-        private:
+        public:
             // Mapa onde a chave é o vértice e o valor é uma lista de pares (vizinho, peso)
             std::map<T, std::list<std::pair<T, int> > > adjacencias;
 
@@ -109,26 +110,35 @@ namespace structures {
     void structures::Grafo<T>::ler(std::ifstream &arquivo) {
         std::string linha;
         std::string inicioVertices = "*vertices";
-        std::string inicioPesos = "*edges";
 
         if (std::getline(arquivo, linha)) {
             size_t pos = linha.find(inicioVertices);
             if (pos != std::string::npos) {
                 std::string valor = linha.substr(pos + inicioVertices.length());
                 int num = std::stoi(valor);
-                for (int i = 0; i < num; i++){
+                for (int i = 1; i < num + 1; i++){
                     std::getline(arquivo, linha);
-                    //CRIAR UM ITEM NO MAP PARA CADA VERTICE
-                    //pra debuggar: std::cout << linha << std::endl;
+                    std::stringstream ss(linha);
+                    T id;
+                    ss >> id;
+                    adjacencias[id] = {};
                 }
                 std::getline(arquivo, linha);
                 while (std::getline(arquivo, linha)){
-                    //pra debuggar: std::cout << linha << std::endl;
-                    //MAPEAR CADA ARESTA
+                    std::stringstream ss(linha);
+                    T u, v;
+                    int peso;
+
+                    // This extracts the three values separated by spaces
+                    if (ss >> u >> v >> peso) {
+                        // Find the list associated with vertex 'u' and add the pair {v, peso}
+                        adjacencias[u].push_back({v, peso});}
                 }
             }     
         } 
     }
+    //pra debuggar: std::cout << linha << std::endl;
+
 
     //---BUSCA EM LARGURA---
     template<typename T>
@@ -145,5 +155,18 @@ int main(int argc, char* argv[]){
 
     meuGrafo1.ler(arquivoEntrada);
 
+    //printando o map só pra degubar
+    for (auto const& item : meuGrafo1.adjacencias) {
+        // Print the Index/Key
+        std::cout << item.first << ": ";
+
+        // Print the list of pairs
+        for (auto const& par : item.second) {
+            std::cout << "{" << par.first << "," << par.second << "} ";
+        }
+    
+        std::cout << std::endl;
+    }
+    
     return 0;
 }
