@@ -6,6 +6,7 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <vector>
 
 //namespace = uma região do código 
 namespace structures {
@@ -25,19 +26,19 @@ namespace structures {
             int qtdArestas();
 
             //retorna o grau do vértice v
-            int grau(const T& vertice);
+            int grau(const T& v);
 
             //retorna o rótulo do vértice v
-            int rotulo(const T& vertice);
+            int rotulo(const T& index);
 
             //retorna os vizinhos do vértice v
-            std::list<T> vizinhos(const T& vertice);
+            std::list<T> vizinhos(const T& index);
 
             //se {u, v} ∈ E, retorna verdadeiro e se não existir, retorna falso
-            bool haAresta(const T& vertice1, const T& vertice2);
+            bool haAresta(const T& index1, const T& index2);
 
             //se {u, v} ∈ E, retorna o peso da aresta {u, v} se não existir, retorna um valor infinito positivo
-            int peso(const T& vertice1, const T& vertice2);
+            int peso(const T& index1, const T& index2);
 
             // deve carregar um grafo a partir de um arquivo no formato especificado ao final deste documento.
             void ler(std::ifstream &arquivo);
@@ -45,8 +46,14 @@ namespace structures {
             void buscaLargura(std::ifstream &arquivo, const T& vertice);
         
         public:
-            // Mapa onde a chave é o vértice e o valor é uma lista de pares (vizinho, peso)
-            std::map<T, std::list<std::pair<T, int> > > adjacencias;
+            struct Vertice {
+                T rotulo; //rotulo do vertice
+                std::list<std::pair<T, int>> vizinhos; // lista com pares <id do vizinho, peso da aresta>
+            };
+            
+            //std::vector<Vertice> vetor_vertices;
+            //se achar melhor usar o vetor, só mudar "vertices" para "vetor_vertices"
+            std::map<T, Vertice> vertices;
 
     };
 
@@ -54,43 +61,41 @@ namespace structures {
     //Função retorna quantidade de vértices 
     template<typename T>
     int structures::Grafo<T>::qtdVertices(){
-        return adjacencias.size();
+        return vertices.size();
     }
 
     template<typename T>
     int structures::Grafo<T>::qtdArestas(){
         int contador = 0;
-        for (auto [vertice,vizinhos] : adjacencias){
-            contador += vizinhos.size();
+        for (const auto par : vertices){
+            contador += par.second  .vizinhos.size();
         }
-        return contador/2; //grafo não direcionado
+        return contador/2; //grafo não direcionado, vai contar tudo 2 vezes
     }
     
     template<typename T>
-    int structures::Grafo<T>::grau(const T& vertice){
-        //quantidade de vizinhos = tamanho da resposta de quando chamamos o hash para um vertice
-        return adjacencias.at(vertice).size();
+    int structures::Grafo<T>::grau(const T& index){
+        return vertices.at(index).vizinhos.size();
     }
 
     template<typename T>
-    int structures::Grafo<T>::rotulo(const T& vertice){
-        //BOTAR CÓDIGO AQUI
-        return 0;
+    int structures::Grafo<T>::rotulo(const T& index){
+        return vertices.at(index).rotulo;
     }
 
     template<typename T>
-    std::list<T> structures::Grafo<T>::vizinhos(const T& vertice){
+    std::list<T> structures::Grafo<T>::vizinhos(const T& index){
         std::list<T> lista_vizinhos;
-        for (auto par : adjacencias.at(vertice)){
+        for (auto par : vertices.at(index).vizinhos){
             lista_vizinhos.push_back(par.first);
         }
         return lista_vizinhos;
     }
 
     template<typename T>
-    bool structures::Grafo<T>::haAresta(const T& vertice1, const T& vertice2){
-        for (auto par : adjacencias.at(vertice1)){
-            if (par.first == vertice2){
+    bool structures::Grafo<T>::haAresta(const T& index1, const T& index2){
+        for (auto par : vertices.at(index1).vizinhos){
+            if (par.first == index2){
                 return true;
             }
         }
@@ -98,9 +103,9 @@ namespace structures {
     }
 
     template<typename T>
-    int structures::Grafo<T>::peso(const T& vertice1, const T& vertice2){
-        for (auto par : adjacencias.at(vertice1)){
-            if (par.first == vertice2){
+    int structures::Grafo<T>::peso(const T& index1, const T& index2){
+        for (auto par : vertices.at(index1).vizinhos){
+            if (par.first == index2){
                 return par.second;
             }
         }
@@ -121,7 +126,7 @@ namespace structures {
                     std::stringstream ss(linha);
                     T id;
                     ss >> id;
-                    adjacencias[id] = {};
+                    vertices[id] = {};
                 }
                 std::getline(arquivo, linha);
                 while (std::getline(arquivo, linha)){
@@ -132,7 +137,8 @@ namespace structures {
                     // This extracts the three values separated by spaces
                     if (ss >> u >> v >> peso) {
                         // Find the list associated with vertex 'u' and add the pair {v, peso}
-                        adjacencias[u].push_back({v, peso});}
+                        vertices[u].vizinhos.emplace_back(v, peso);
+                    }
                 }
             }     
         } 
@@ -155,18 +161,31 @@ int main(int argc, char* argv[]){
 
     meuGrafo1.ler(arquivoEntrada);
 
-    //printando o map só pra degubar
-    for (auto const& item : meuGrafo1.adjacencias) {
-        // Print the Index/Key
-        std::cout << item.first << ": ";
+//            struct Vertice {
+ //               T rotulo; //rotulo do vertice
+//                std::list<std::pair<int, int>> vizinhos; // lista com pares <id do vizinho, peso da aresta>
+//            };           
+//            std::map<T, Vertice> vertices;
 
-        // Print the list of pairs
-        for (auto const& par : item.second) {
-            std::cout << "{" << par.first << "," << par.second << "} ";
+
+    //printando o grafo só pra degubar
+    for (auto const& v : meuGrafo1.vertices) {  // v = <T, Vertice>
+        std::cout << v.first << ": ";
+        for (auto const& u : v.second.vizinhos) { //u = pair<int, int>
+
+            std::cout << "{" << u.first << "," << u.second << "} ";
+
         }
-    
         std::cout << std::endl;
     }
     
     return 0;
 }
+
+// TO-DO:
+// - alterar estrutura de map para incluir o rótulo
+// - fazer metodo retornar rotulo
+// - ajeitar negocio lá infinito
+// - fazer programa receber como argumento o nome do arquivo a ser lido
+// - programar os algoritmos
+// - separar em arquivos diferentes cada algoritmo
