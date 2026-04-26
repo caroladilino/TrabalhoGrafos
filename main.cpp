@@ -4,9 +4,9 @@
 int main(int argc, char* argv[]){
     //todo: alterar pra receceber o nome do arquivo pelo terminal
     
-    //structures::Grafo<std::string> meuGrafo1;
-    //std::ifstream arquivoEntrada("grafo.txt");
-    //meuGrafo1.ler(arquivoEntrada);
+    structures::Grafo<int> meuGrafo1;
+    std::ifstream arquivoEntrada("grafo.txt");
+    meuGrafo1.ler(arquivoEntrada);
     //printando o grafo só pra degubar
     //for (auto const& v : meuGrafo1.vertices) {  // v = <T, Vertice>
     //    std::cout << v.first << ": ";
@@ -14,7 +14,7 @@ int main(int argc, char* argv[]){
     //        std::cout << "{" << u.first << "," << u.second << "} ";}
     //    std::cout << std::endl;}
     
-    buscaLargura("grafo.txt", 3);
-
+    buscaLargura(meuGrafo1, 3);
+    std::cout << "main rodou ctinho";
     return 0;
 }
