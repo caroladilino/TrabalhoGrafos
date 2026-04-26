@@ -11,11 +11,23 @@
 #include <sstream>
 #include "Grafo.h"
 
-// 1. Declaração (Protótipo)
+// 1. Declaração de todas as funções
 template<typename T>
 void buscaLargura(const structures::Grafo<T>& G, const T& s);
 
-// 2. Implementação (O compilador precisa dela AQUI)
+template<typename T>
+void cicloEuleriano(const structures::Grafo<T>& G);
+
+//ou djiskra, pode escolher
+template<typename T>
+void bellmanFord(const structures::Grafo<T>& G, const T& s);
+
+template<typename T>
+void floydWarshall(const structures::Grafo<T>& G);
+
+
+
+// 2. Implementação de todas as funções
 template<typename T>
 void buscaLargura(const structures::Grafo<T>& G, const T& s){
 
@@ -30,15 +42,12 @@ void buscaLargura(const structures::Grafo<T>& G, const T& s){
         map_ancestral[v];
         map_distancia[v] = 10000;
     }
-
     //configurando o vértice de origem
     map_conhecido.at(s) = true;
     map_distancia.at(s) = 0;
-
     //preparando a fila de visitas
     std::queue<T> Q;
     Q.push(s);
-
     //Propagação das visitas
     while (!Q.empty()){
         T u = Q.front();
@@ -53,7 +62,6 @@ void buscaLargura(const structures::Grafo<T>& G, const T& s){
             }
         }
     }
-
     for (int i=0; i < (map_distancia.size() - 1); i++){
         std::cout << i << ": ";
         for (const auto& [key, value] : map_distancia) {
@@ -63,10 +71,23 @@ void buscaLargura(const structures::Grafo<T>& G, const T& s){
         }
         std::cout << "\n";
     }
-
     std::cout << "buscaLargura terminou de rodar" << "\n";
+}
 
 
+template<typename T>
+void cicloEuleriano(const structures::Grafo<T>& G){
+    //BOTAR CÓDIGO AQUI
+}
+
+template<typename T>
+void bellmanFord(const structures::Grafo<T>& G, const T& s){
+    //BOTAR CÓDIGO AQUI
+}
+
+template<typename T>
+void floydWarshall(const structures::Grafo<T>& G){
+    //BOTAR CÓDIGO AQUI
 }
 
 #endif
