@@ -24,25 +24,25 @@ namespace structures {
             Grafo() = default;
 
             //método retorna quantidade de vértices
-            int qtdVertices();
+            int qtdVertices() const;
 
             //retorna a quantidade de arestas
-            int qtdArestas();
+            int qtdArestas() const;
 
             //retorna o grau do vértice v
-            int grau(const T& v);
+            int grau(const T& v) const;
 
             //retorna o rótulo do vértice v
-            int rotulo(const T& index);
+            int rotulo(const T& index) const;
 
             //retorna os vizinhos do vértice v
-            std::list<T> vizinhos(const T& index);
+            std::list<T> vizinhos(const T& index) const;
 
             //se {u, v} ∈ E, retorna verdadeiro e se não existir, retorna falso
-            bool haAresta(const T& index1, const T& index2);
+            bool haAresta(const T& index1, const T& index2) const;
 
             //se {u, v} ∈ E, retorna o peso da aresta {u, v} se não existir, retorna um valor infinito positivo
-            int peso(const T& index1, const T& index2);
+            int peso(const T& index1, const T& index2) const;
 
             // deve carregar um grafo a partir de um arquivo no formato especificado ao final deste documento.
             void ler(std::ifstream &arquivo);
@@ -61,12 +61,12 @@ namespace structures {
 
     //Função retorna quantidade de vértices 
     template<typename T>
-    int structures::Grafo<T>::qtdVertices(){
+    int structures::Grafo<T>::qtdVertices() const{
         return vertices.size();
     }
 
     template<typename T>
-    int structures::Grafo<T>::qtdArestas(){
+    int structures::Grafo<T>::qtdArestas() const{
         int contador = 0;
         for (const auto par : vertices){
             contador += par.second  .vizinhos.size();
@@ -75,17 +75,17 @@ namespace structures {
     }
     
     template<typename T>
-    int structures::Grafo<T>::grau(const T& index){
+    int structures::Grafo<T>::grau(const T& index) const{
         return vertices.at(index).vizinhos.size();
     }
 
     template<typename T>
-    int structures::Grafo<T>::rotulo(const T& index){
+    int structures::Grafo<T>::rotulo(const T& index) const{
         return vertices.at(index).rotulo;
     }
 
     template<typename T>
-    std::list<T> structures::Grafo<T>::vizinhos(const T& index){
+    std::list<T> structures::Grafo<T>::vizinhos(const T& index) const{
         std::list<T> lista_vizinhos;
         for (auto par : vertices.at(index).vizinhos){
             lista_vizinhos.push_back(par.first);
@@ -94,7 +94,7 @@ namespace structures {
     }
 
     template<typename T>
-    bool structures::Grafo<T>::haAresta(const T& index1, const T& index2){
+    bool structures::Grafo<T>::haAresta(const T& index1, const T& index2) const{
         for (auto par : vertices.at(index1).vizinhos){
             if (par.first == index2){
                 return true;
@@ -104,7 +104,7 @@ namespace structures {
     }
 
     template<typename T>
-    int structures::Grafo<T>::peso(const T& index1, const T& index2){
+    int structures::Grafo<T>::peso(const T& index1, const T& index2) const{
         for (auto par : vertices.at(index1).vizinhos){
             if (par.first == index2){
                 return par.second;
