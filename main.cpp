@@ -14,7 +14,7 @@ int main(int argc, char* argv[]){
     //        std::cout << "{" << u.first << "," << u.second << "} ";}
     //    std::cout << std::endl;}
     
-    buscaLargura(meuGrafo1, 3);
-    std::cout << "main rodou ctinho";
+    buscaLargura(meuGrafo1, 1);
+    std::cout << "main rodou ctinho" << "\n";
     return 0;
 }
