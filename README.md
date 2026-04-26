@@ -1,6 +1,5 @@
 <h3>TO-DO:</h3>
-OK alterar estrutura de map para incluir o rótulo
-OK fazer metodo retornar rotulo
+
 - ajeitar para funções usarem infinito (por enquanto usam 1000)
 - fazer programa receber como argumento o nome do arquivo a ser lido e o vértice a ser usado
 - programar os algoritmos
