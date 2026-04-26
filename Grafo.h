@@ -135,10 +135,11 @@ namespace structures {
                     T u, v;
                     int peso;
 
-                    // This extracts the three values separated by spaces
+                    // extrair os 3 valores com um espaço
                     if (ss >> u >> v >> peso) {
-                        // Find the list associated with vertex 'u' and add the pair {v, peso}
+                        // Adicionar o par a lista de arestas dos dois vertices (pq é não dirigido)
                         vertices[u].vizinhos.emplace_back(v, peso);
+                        vertices[v].vizinhos.emplace_back(u, peso);
                     }
                 }
             }     
