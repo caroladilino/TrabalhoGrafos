@@ -63,24 +63,124 @@ void buscaLargura(const structures::Grafo<T>& G, const T& s){
             }
         }
     }
-    for (int i=0; i < (map_distancia.size() - 1); i++){
-        std::cout << i << ": ";
+
+    // Descobrindo a distância máxima (max_dist)
+    int max_dist = 0;
+    for (const auto& par : map_distancia) {
+        if (par.second > max_dist && par.second != 10000) {
+            max_dist = par.second;
+        }
+    }
+    
+    for (int i = 0; i <= max_dist; i++) {
+        std::vector<T> vertices_no_nivel;
         for (const auto& [key, value] : map_distancia) {
-            if (value == i){
-                std::cout << key << ",";
+            if (value == i) {
+                vertices_no_nivel.push_back(key);
             }
         }
-        std::cout << "\n";
+
+        // --- NOVA PROTEÇÃO: SÓ IMPRIME SE O NÍVEL NÃO ESTIVER VAZIO ---
+        if (!vertices_no_nivel.empty()) {
+            std::cout << i << ": ";
+            std::sort(vertices_no_nivel.begin(), vertices_no_nivel.end());
+            
+            for (size_t j = 0; j < vertices_no_nivel.size(); j++) {
+                std::cout << vertices_no_nivel[j];
+                if (j < vertices_no_nivel.size() - 1) {
+                    std::cout << ",";
+                }
+            }
+            std::cout << "\n";
+        }
     }
-    std::cout << "buscaLargura terminou de rodar" << "\n";
 }
+
+template<typename T>
+    void buscaSubCiclo(T v, const structures::Grafo<T>& G, std::map<std::pair<T, T>, int>& aresta_visitada, std::vector<T>& ciclo) {
+        
+        // 1. Percorremos todos os vizinhos do vértice atual 'v'
+        for (const T& u : G.vizinhos(v)) {
+            
+            // 2. Verificamos se a aresta entre 'v' e 'u' ainda está disponível
+            if (aresta_visitada[{v, u}] > 0) {
+                
+                // a) "Gasta" a aresta nos dois sentidos, diminuindo o contador
+                aresta_visitada[{v, u}]--;
+                aresta_visitada[{u, v}]--;
+                
+                // b) Chamada recursiva para continuar a exploração a partir de 'u'
+                buscaSubCiclo(u, G, aresta_visitada, ciclo);
+            }
+        }
+        
+        // c) Vértice ficou sem opções de saída, adicionamos ao ciclo (caminho)
+        ciclo.push_back(v);
+    }
+
 
 
 template<typename T>
 void cicloEuleriano(const structures::Grafo<T>& G){
-   //BOTAR CÓDIGO AQUI
-}
 
+    std::map<std::pair<T, T>, int> aresta_visitada;
+
+   // 1. Caso base
+    if (G.qtdArestas() == 0) {
+        std::cout << "0\n";
+        return;
+    }
+
+    //2. Inicializando todos como não conhecidos
+    for (const auto& par_u : G.vertices) {
+        T u = par_u.first;
+        for (const auto& vizinho : par_u.second.vizinhos) {
+            T v = vizinho.first;
+            aresta_visitada[{u, v}] = 0; 
+        }
+    }
+
+    //3. Somando 1 a todos ( 1-> disponivel , 0-> indisponivel)
+    for (const auto& par_u : G.vertices) {
+        T u = par_u.first;
+        for (const auto& vizinho : par_u.second.vizinhos) {
+            T v = vizinho.first;
+            aresta_visitada[{u, v}] = aresta_visitada[{u, v}] + 1 ; 
+        }
+    }
+
+    for (const auto& par : G.vertices) {
+        if (G.grau(par.first) % 2 != 0) {
+            std::cout << "0\n"; // Imprime 0 indicando que o ciclo é impossível
+            return; // Aborta a função imediatamente
+        }
+    }
+
+
+    //pegando um vértice aleatório
+    T inicio = G.vertices.begin()->first;
+    std::vector<T> ciclo_final;
+
+    buscaSubCiclo(inicio, G, aresta_visitada, ciclo_final);
+
+    if (ciclo_final.size() != G.qtdArestas() + 1) {
+        std::cout << "0\n"; 
+        return; 
+    }
+
+    std::reverse(ciclo_final.begin(), ciclo_final.end());
+
+    // 7. Imprimindo o resultado
+        std::cout << "1\n"; // Opcional: flag indicando que achou o ciclo
+        for (size_t i = 0; i < ciclo_final.size(); i++) {
+            std::cout << ciclo_final[i];
+            if (i < ciclo_final.size() - 1) {
+                std::cout << ",";
+            }
+        }
+        std::cout << "\n";
+    }
+    
 template<typename T>
 void bellmanFord(const structures::Grafo<T>& G, const T& s){
     // entrada: grafo ponderado orientado/dirigido ou não
@@ -136,7 +236,7 @@ void bellmanFord(const structures::Grafo<T>& G, const T& s){
         
         // se o vertice for inacessível
         if (map_distancia.at(destino) == 100000) {
-            std::cout << "inacessível; d = infinito\n"
+            std::cout << "inacessível; d = infinito\n";
             continue;
         }
         // reconstruir caminho de trás pra frente
@@ -153,7 +253,7 @@ void bellmanFord(const structures::Grafo<T>& G, const T& s){
         for (int i = caminho.size() - 1; i >= 0; i--) {
             std::cout << caminho[i];
             if (i > 0) { // não vai printar no último
-                std::cout << ","
+                std::cout << ",";
             }
         }
         std::cout << "; d=" << map_distancia.at(destino) << "\n";
@@ -162,7 +262,74 @@ void bellmanFord(const structures::Grafo<T>& G, const T& s){
 
 template<typename T>
 void floydWarshall(const structures::Grafo<T>& G){
-    //BOTAR CÓDIGO AQUI
-}
+    int V = G.qtdVertices();
+        if (V == 0) return;
+
+        // 1. Extrair e ordenar os vértices (exigência do enunciado: "ordem crescente")
+        std::vector<T> vertices;
+        for (const auto& par : G.vertices) {
+            vertices.push_back(par.first);
+        }
+        std::sort(vertices.begin(), vertices.end());
+
+        // 2. Criar um mapeamento de Vértice (T) para Índice da Matriz (0 a V-1)
+        std::map<T, int> map_index;
+        for (int i = 0; i < V; ++i) {
+            map_index[vertices[i]] = i;
+        }
+
+        // 3. Inicializar a matriz de distâncias
+        // Usamos um valor alto o suficiente para simular o infinito, 
+        // mas que não cause overflow (estouro de limite do int) na hora de somar.
+        const int INFINITO = 100000000; 
+        std::vector<std::vector<int>> dist(V, std::vector<int>(V, INFINITO));
+
+        // A distância de um vértice para ele mesmo é 0
+        for (int i = 0; i < V; ++i) {
+            dist[i][i] = 0;
+        }
+
+        // Preencher a matriz com os pesos reais das arestas
+        for (const auto& par : G.vertices) {
+            T u = par.first;
+            int u_idx = map_index[u];
+            for (const auto& vizinho : par.second.vizinhos) {
+                T v = vizinho.first;
+                int peso = vizinho.second;
+                int v_idx = map_index[v];
+                dist[u_idx][v_idx] = peso;
+            }
+        }
+
+        // 4. O coração do Algoritmo de Floyd-Warshall (O triplo loop: k, i, j)
+        for (int k = 0; k < V; ++k) {
+            for (int i = 0; i < V; ++i) {
+                for (int j = 0; j < V; ++j) {
+                    // Só tenta somar se houver caminho válido (evita somar infinito com infinito)
+                    if (dist[i][k] != INFINITO && dist[k][j] != INFINITO) {
+                        if (dist[i][k] + dist[k][j] < dist[i][j]) {
+                            dist[i][j] = dist[i][k] + dist[k][j];
+                        }
+                    }
+                }
+            }
+        }
+
+        // 5. Impressão no formato estrito do corretor (ex: 1:0,10,3,5)
+        for (int i = 0; i < V; ++i) {
+            std::cout << vertices[i] << ":"; // Imprime o ID do vértice e os dois-pontos
+            
+            for (int j = 0; j < V; ++j) {
+                std::cout << dist[i][j];
+                
+                // Imprime a vírgula apenas se NÃO for o último elemento da linha
+                if (j < V - 1) {
+                    std::cout << ",";
+                }
+            }
+            std::cout << "\n"; // Quebra a linha para o próximo vértice
+        }
+    }
+
 
 #endif
